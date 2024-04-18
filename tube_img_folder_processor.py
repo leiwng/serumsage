@@ -30,6 +30,7 @@ from PyQt5.QtCore import pyqtSignal, QThread
 from utils.utils import (
     get_files_with_extensions,
     convert_HIL_indices_to_class,
+    md5_of_file,
 )
 from utils.chromo_cv_utils import cv_imread
 
@@ -55,6 +56,7 @@ def write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp):
         f.write(f'H:{HIL["H"]}' + '\n')
         f.write(f'I:{HIL["I"]}' + '\n')
         f.write(f'L:{HIL["L"]}' + '\n')
+    return text_fp
 
 
 class TubeImgFolderProcessor(QThread):
@@ -90,11 +92,27 @@ class TubeImgFolderProcessor(QThread):
             if os.path.exists(img_fp_in_dst_folder):
                 cur_dt = datetime.now()
                 cur_dt_str = cur_dt.strftime("%Y%m%d%H%M%S%f")[:-3]
-                img_fp_in_dst_folder = os.path.join(
-                    self.output_folder_fp, f'{img_fn}_{cur_dt_str}{img_ext}')
-
+                # 避免在已经加上时间戳的文件名再次加时间戳
+                # 判断文件名是否已经加上时间戳,比如:_20231025141526125
+                if len(img_fn) > len('_20231025141526125') and img_fn[-18] == '_' and img_fn[-17:].isdigit():
+                    img_fp_in_dst_folder = os.path.join(
+                        self.output_folder_fp, f'{img_fn[:-18]}_{cur_dt_str}{img_ext}')
+                else:
+                    img_fp_in_dst_folder = os.path.join(
+                        self.output_folder_fp, f'{img_fn}_{cur_dt_str}{img_ext}')
             move(img_fp, img_fp_in_dst_folder)
-            write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp_in_dst_folder)
+            HIL_fp = write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp_in_dst_folder)
+
+            # 计算MD5
+            # Image的MD5
+            img_md5_hash = md5_of_file(img_fp_in_dst_folder)
+            # HIL的MD5
+            HIL_md5_hash = md5_of_file(HIL_fp)
+            # 保存MD5
+            md5_fp = f'{os.path.splitext(img_fp_in_dst_folder)[0]}.md5'
+            with open(md5_fp, 'w', encoding='utf-8') as f:
+                f.write(f'img_md5:{img_md5_hash}' + '\n')
+                f.write(f'HIL_md5:{HIL_md5_hash}' + '\n')
 
             self.imgProcessed.emit(os.path.join(
                 self.output_folder_fp, img_basename), HIL['H'], HIL['I'], HIL['L'], H_sqr, I_sqr, L_sqr)

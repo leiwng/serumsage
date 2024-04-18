@@ -11,6 +11,24 @@ __status__ = "Development"
 
 
 import os
+import hashlib
+
+
+def md5_of_file(file_path):
+    """get md5 hash of a file
+
+    Args:
+        file_path (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    md5_hash = hashlib.md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(128 * md5_hash.block_size), b""):
+            md5_hash.update(chunk)
+    return md5_hash.hexdigest()
+
 
 def get_files_with_extensions(folder_path, extensions):
     """Get file paths with specific extensions in a folder

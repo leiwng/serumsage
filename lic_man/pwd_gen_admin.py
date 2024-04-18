@@ -42,9 +42,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     encoding = "utf-8"
-    result, usr_name, expiry_date = verify_license(license_fp, encoding, public_key_fp)
+    result, msg, usr_name, expiry_date = verify_license(license_fp, encoding, public_key_fp)
     if not result:
-        print("许可证无效,退出.")
+        print(msg)
         sys.exit(1)
 
     # 验证公司产品主密码签名

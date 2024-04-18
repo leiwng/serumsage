@@ -168,7 +168,7 @@ def verify_password_sign(public_key_fp, password_hash_sign_fp):
 
 
 def verify_password(stored_hash, provided_password):
-    """验证输入的密码是否正确
+    """验证输入的密码字串是否正确
     Args:
         stored_hash (bytes): 主密码的hash散列
         provided_password (String): 输入的主密码
@@ -236,6 +236,20 @@ def verify_license(license_fp, encoding, public_key_fp):
     license_info = license_data["license_info"]
     signature = bytes.fromhex(license_data["signature"])
 
+    # 验证硬件信息是否是本机
+    # 验证CPU信息
+    if license_info["cpu_info"] != get_cpu_info_str():
+        # print("CPU信息不匹配。")
+        return False, "硬件信息不匹配(C)", None, None
+    # 验证MAC地址
+    if license_info["mac_addr"] != get_first_mac_address():
+        # print("MAC地址不匹配。")
+        return False, "硬件信息不匹配(M)", None, None
+    # 验证BIOS序列号
+    if license_info["bios_sn"] != get_bios_serial_number():
+        # print("BIOS序列号不匹配。")
+        return False, "硬件信息不匹配(B)", None, None
+
     # 读取public key
     with open(public_key_fp, "rb") as f:
         public_key = serialization.load_pem_public_key(
@@ -255,28 +269,40 @@ def verify_license(license_fp, encoding, public_key_fp):
         )
         # print("许可证签名验证成功。")
     except InvalidSignature:
-        print("许可证签名验证失败。")
-        return False, None, None
-
-    # 验证硬件信息是否是本机
-    # 验证CPU信息
-    if license_info["cpu_info"] != get_cpu_info_str():
-        print("CPU信息不匹配。")
-        return False, None, None
-    # 验证MAC地址
-    if license_info["mac_addr"] != get_first_mac_address():
-        print("MAC地址不匹配。")
-        return False, None, None
-    # 验证BIOS序列号
-    if license_info["bios_sn"] != get_bios_serial_number():
-        print("BIOS序列号不匹配。")
-        return False, None, None
+        # print("许可证签名验证失败。")
+        return False, "许可证签名验证失败", None, None
 
     # 验证许可证信息，例如到期日期
     expiry_date = datetime.fromisoformat(license_info["expiry_date"])
     if datetime.now() > expiry_date:
-        print("许可证已过期。")
-        return False, None, None
+        # print("许可证已过期。")
+        return False, "许可证已过期", None, None
     else:
-        print("许可证有效。")
-        return True, license_info["usr_name"], license_info["expiry_date"]
+        # print("许可证有效。")
+        return True, "许可证有效", license_info["usr_name"], license_info["expiry_date"]
+
+
+def verify_admin_password(public_key_fp, admin_pwd_hash_sign_fp, master_pwd_hash_sign_fp, admin_pwd):
+    """验证管理员密码
+
+    Args:
+        admin_pwd_hash_fp (String): 管理员密码hash文件路径
+        master_pwd_hash_sign_fp (String): 公司产品主密码的签名文件路径
+        admin_pwd (String): 管理员密码
+
+    Returns:
+        Boolean: 管理员密码是否有效
+    """
+    # 读取管理员密码hash
+    master_hash_in_admin, admin_hash = load_password_hash_sign(admin_pwd_hash_sign_fp)
+    # 验证主密码签名
+    result, master_hash_in_master = verify_password_sign(public_key_fp, master_pwd_hash_sign_fp)
+    if not result:
+        return False, "主密码签名验证失败"
+    # 验证主密码是否一致
+    if master_hash_in_admin != master_hash_in_master:
+        return False, "管理员密码验证失败(D)"
+    # 验证管理员密码
+    if not verify_password(admin_hash, admin_pwd):
+        return False, "管理员密码验证失败(P)"
+    return True, "管理员密码验证成功"

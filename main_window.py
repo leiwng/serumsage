@@ -16,7 +16,7 @@ import configparser
 
 from PyQt5.QtCore import QObject, QTimer, Qt
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene, QFileDialog, QLabel, QSplashScreen
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene, QFileDialog, QLabel, QSplashScreen, QInputDialog, QLineEdit
 
 import ui_design.Ui_main_window as MainWindowUI
 import sys_cfg_dialog as SysCfgDialog
@@ -27,7 +27,7 @@ from utils.utils import (
     convert_HIL_indices_to_class
 )
 from utils.chromo_cv_utils import cv_imread
-from lic_man.lm_comm_lib import verify_license
+from lic_man.lm_comm_lib import verify_license, verify_admin_password
 from logger import log
 
 
@@ -53,7 +53,7 @@ class MainWindow(QMainWindow, QObject):
         # setup system config dialog
         self.sys_cfg_dlg = SysCfgDialog.SysCfgDialog(self)
         self.main_window_ui.sysCfgAction.triggered.connect(
-            self.sys_cfg_dlg.show)
+            self.onSysCfgActionMenuTriggered)
 
         # setup about dialog
         self.main_window_ui.serumSegaAboutAction.triggered.connect(
@@ -168,6 +168,20 @@ class MainWindow(QMainWindow, QObject):
         self.status_report_label.setText("状态:正常")
         log.info("SerumSage started.")
 
+    def onSysCfgActionMenuTriggered(self):
+        """当系统配置菜单被触发时进行的操作
+        """
+        # 弹出管理员密码输入对话框
+        password, ok = QInputDialog.getText(self, "管理员验证", "请输入管理员密码：", QLineEdit.Password)
+        pub_key_fp = "./lic_man/kms_serumsage_public_key.pem"
+        a_hash_sign_fp = "./lic_man/admin_pwd.hash.sign"
+        m_hash_sign_fp = "./lic_man/master_pwd.hash.sign"
+        passed, return_msg = verify_admin_password(pub_key_fp, a_hash_sign_fp, m_hash_sign_fp, password)
+        if ok and passed:
+            self.sys_cfg_dlg.show()
+        elif ok:
+            QMessageBox.critical(self, "密码验证失败", return_msg)
+
     def showTubeImgAndHIL4RB(self):
         selected_item = self.main_window_ui.outputFileList.currentItem()
         if selected_item is not None:
@@ -184,7 +198,7 @@ class MainWindow(QMainWindow, QObject):
                 self.getHILInfoFromFileAndShow(text_fp)
 
     def getHILInfoFromFileAndShow(self, text_fp):
-        with open(text_fp, 'r') as f:
+        with open(text_fp, 'r', encoding='utf-8') as f:
             lines = f.readlines()
             HIL = {}
             for line in lines:
@@ -214,9 +228,8 @@ class MainWindow(QMainWindow, QObject):
         about.setWindowTitle("关于-SerumSage")
         about.setWindowIcon(QIcon('./ui_img/icon_kemoshen.png'))
         about.setText("血清指数智能判读-SerumSage")
-        expiry_date = self.expiry_date[:10]
         about.setInformativeText(
-            f"授权用户: {self.usr_name}\n使用许可到期时间: {expiry_date}\n\n四川科莫生医疗科技有限公司.\n版本号:1.0.0\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
+            f"授权用户: {self.usr_name}\n使用许可到期时间: {self.expiry_date[:10]}\n\n四川科莫生医疗科技有限公司.\n版本号:1.0.0\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
         kmsIcon = QPixmap('./ui_img/icon_kemoshen.png')
         about.setIconPixmap(kmsIcon)
         about.exec_()
@@ -328,10 +341,12 @@ if __name__ == '__main__':
     QTimer.singleShot(2000, splash.close)
 
     # 检查许可证
-    result, usr_name, expiry_date = verify_license("./lic_man/license.lic", "utf-8", "./lic_man/kms_serumsage_public_key.pem")
+    result, msg, usr_name, expiry_date = verify_license("./lic_man/license_test.lic", "utf-8", "./lic_man/kms_serumsage_public_key.pem")
     if not result:
-        log.error("许可证验证失败.")
-        sys.exit(app.exec_())
+        log.error(msg)
+        QMessageBox.critical(None, "许可证验证失败", "\n\n  许可证验证失败:      \n\n" + msg + "    \n")
+        sys.exit(1)
+        # sys.exit(app.exec_())
 
     main_window_ui = MainWindow(usr_name=usr_name, expiry_date=expiry_date)
     # main_window_ui.showMaximized()
