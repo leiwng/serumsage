@@ -103,7 +103,9 @@ class MainWindow(QMainWindow, QObject):
 
         # Init HIL Predictor
         self.HIL_predictor = HIL_predictor(
-            './pytorch_yolov5/checkpoints/best.pt', './pytorch_LogicRegression/checkpoints/LHI-model-use.pt')
+            './models/chkpnts/best.pt', './models/chkpnts/LHI-model-use.pt')
+        # self.HIL_predictor = HIL_predictor(
+        #     './pytorch_yolov5/checkpoints/best.pt', './pytorch_LogicRegression/checkpoints/LHI-model-use.pt')
         log.info("HIL Predictor initialized.")
 
         # Init Image folder processor
@@ -171,12 +173,30 @@ class MainWindow(QMainWindow, QObject):
     def onSysCfgActionMenuTriggered(self):
         """当系统配置菜单被触发时进行的操作
         """
+
+        pub_key_fp = "./lic_man/kms_serumsage_public_key.pem"
+        # 判断public key是否存在
+        if not os.path.exists(pub_key_fp):
+            QMessageBox.critical(self, "公钥文件不存在", "公钥文件不存在")
+            return
+
+        admin_pwd_hash_sign_fp = "./lic_man/admin_pwd.hash.sign"
+        # 判断管理员密码hash签名文件是否存在
+        if not os.path.exists(admin_pwd_hash_sign_fp):
+            QMessageBox.critical(self, "管理员密码hash签名文件不存在", "管理员密码hash签名文件不存在")
+            return
+
+        master_pwd_hash_sign_fp = "./lic_man/master_pwd.hash.sign"
+        # 判断主密码hash签名文件是否存在
+        if not os.path.exists(master_pwd_hash_sign_fp):
+            QMessageBox.critical(self, "主密码hash签名文件不存在", "主密码hash签名文件不存在")
+            return
+
         # 弹出管理员密码输入对话框
         password, ok = QInputDialog.getText(self, "管理员验证", "请输入管理员密码：", QLineEdit.Password)
-        pub_key_fp = "./lic_man/kms_serumsage_public_key.pem"
-        a_hash_sign_fp = "./lic_man/admin_pwd.hash.sign"
-        m_hash_sign_fp = "./lic_man/master_pwd.hash.sign"
-        passed, return_msg = verify_admin_password(pub_key_fp, a_hash_sign_fp, m_hash_sign_fp, password)
+
+        passed, return_msg = verify_admin_password(pub_key_fp, admin_pwd_hash_sign_fp, master_pwd_hash_sign_fp, password)
+
         if ok and passed:
             self.sys_cfg_dlg.show()
         elif ok:
@@ -341,7 +361,7 @@ if __name__ == '__main__':
     QTimer.singleShot(2000, splash.close)
 
     # 检查许可证
-    result, msg, usr_name, expiry_date = verify_license("./lic_man/license_test.lic", "utf-8", "./lic_man/kms_serumsage_public_key.pem")
+    result, msg, usr_name, expiry_date = verify_license("./lic_man/license.lic", "utf-8", "./lic_man/kms_serumsage_public_key.pem")
     if not result:
         log.error(msg)
         QMessageBox.critical(None, "许可证验证失败", "\n\n  许可证验证失败:      \n\n" + msg + "    \n")

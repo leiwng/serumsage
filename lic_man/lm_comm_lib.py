@@ -22,7 +22,7 @@ from datetime import datetime
 
 
 import bcrypt
-import netifaces
+# import netifaces
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
@@ -39,19 +39,50 @@ def get_cpu_info_str():
     return platform.processor()
 
 
-def get_first_mac_address():
-    """获取第一个网卡的MAC地址
+# def get_first_mac_address():
+#     """获取第一个网卡的MAC地址
+
+#     Returns:
+#         String: 第一个网卡的MAC地址
+#     """
+#     for interface in netifaces.interfaces():
+#         addrs = netifaces.ifaddresses(interface)
+#         if netifaces.AF_LINK in addrs:
+#             # 返回第一个找到的MAC地址
+#             return addrs[netifaces.AF_LINK][0]['addr']
+#     # 如果没有网卡返回公司缺省的MAC地址
+#     return '8c:8c:08:18:80:66'
+
+
+def get_cpu_serial_number():
+    """获取CPU序列号
 
     Returns:
-        String: 第一个网卡的MAC地址
+        String: CPU序列号
     """
-    for interface in netifaces.interfaces():
-        addrs = netifaces.ifaddresses(interface)
-        if netifaces.AF_LINK in addrs:
-            # 返回第一个找到的MAC地址
-            return addrs[netifaces.AF_LINK][0]['addr']
-    # 如果没有网卡返回公司缺省的MAC地址
-    return '8c:8c:08:18:80:66'
+    try:
+        cpu_info = subprocess.check_output("wmic cpu get processorid", shell=True)
+        return cpu_info.decode().split('\n')[1].strip()
+    except Exception as e:
+        # 遇异常，返回公司缺省的CPU序列号
+        print(e)
+        return 'BFEBFBFF08188066'
+
+
+def get_csp_uuid():
+    """获取系统序列号CSP UUID, 主板识别码
+    微软的 CSP UUID (Cryptographic Service Provider Universally Unique Identifier) 是一个针对 Windows 平台的独特标识符，它是通过主板上的 TPM(Trusted Platform Module)芯片生成的，因此与硬件相关且无法轻易修改。
+
+    Returns:
+        String: 系统序列号
+    """
+    try:
+        csp_uuid = subprocess.check_output("wmic csproduct get uuid", shell=True)
+        return csp_uuid.decode().split('\n')[1].strip()
+    except Exception as e:
+        # 遇异常，返回公司缺省的系统序列号
+        print(e)
+        return '969C6349-390E-11EB-80E9-8C8C08188066'
 
 
 def get_bios_serial_number():
@@ -242,7 +273,7 @@ def verify_license(license_fp, encoding, public_key_fp):
         # print("CPU信息不匹配。")
         return False, "硬件信息不匹配(C)", None, None
     # 验证MAC地址
-    if license_info["mac_addr"] != get_first_mac_address():
+    if license_info["csp_uuid"] != get_csp_uuid():
         # print("MAC地址不匹配。")
         return False, "硬件信息不匹配(M)", None, None
     # 验证BIOS序列号

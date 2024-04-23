@@ -15,6 +15,13 @@ test/tube_img/
 *.lic
 *.uis
 
+### Nuitka
+exe_output/
+*.onefile-build/
+*.dist/
+*.build/
+*.exe
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

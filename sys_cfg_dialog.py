@@ -82,6 +82,6 @@ class SysCfgDialog(QDialog, QObject):
             'tube_img_folder': self.tube_img_folder,
             'detect_output_folder': self.detect_output_folder
         }
-        with open('./cfg.ini', 'w') as cfg_f:
+        with open('./cfg.ini', 'w', encoding='utf-8') as cfg_f:
             self.config.write(cfg_f)
         return
