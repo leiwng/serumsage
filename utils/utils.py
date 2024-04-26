@@ -34,7 +34,7 @@ def get_files_with_extensions(folder_path, extensions):
     """Get file paths with specific extensions in a folder
 
     Args:
-        folder_path (String): File folder path, e.g. './test/tube_img', the folder must be exist
+        folder_path (String): File folder path, e.g. TUBE_IMG_DIR_FP, the folder must be exist
         extensions (List of String): List of File extensions, e.g. ['jpg', 'png', 'jpeg', 'JPG','bmp']
 
     Returns:

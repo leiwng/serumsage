@@ -1,0 +1,221 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "D:/Prj/github/serumsage/serumsage.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "D:/Prj/github/serumsage/ui_img/logo_icon_kemoshen.ico"
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/utils"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/pytorch_yolov5"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/pytorch_LogicRegression"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/models/chkpnts"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/lic_man"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "models"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "models.yolo"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/venv/Lib/site-packages"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/Prj/github/serumsage/venv/Lib/site-packages/torch/lib"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "new_world"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "logger"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "PyQt5"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "PyQt5.QtCore"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "PyQt5.QtGui"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "PyQt5.QtWidgets"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "ui_design"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "ui_design.Ui_sys_cfg_dialog"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "loguru"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "cv2"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "numpy"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_LogicRegression"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_LogicRegression.HIL_regression_main"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_yolov5"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_yolov5.yolov5_main"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "utils"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "utils.chromo_cv_utils"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_yolov5.utils_yolo.utils"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_yolov5.utils_yolo"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "pytorch_LogicRegression.Model_for_three"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "lic_man"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "lic_man.lm_comm_lib"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "main_window"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "ui_design.Ui_main_window"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "sys_cfg_dialog"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "tube_img_folder_processor"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "HIL_predictor"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "utils.utils"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "bcrypt"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "cryptography"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

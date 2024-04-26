@@ -113,7 +113,7 @@ class App(QMainWindow):
         about.setWindowTitle("About")
         about.setText("血清指数智能判读-SerumSage")
         about.setInformativeText("四川科莫生医疗科技有限公司.\nCopyright © 2023 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
-        kmsIcon = QPixmap('./ui_img/icon_kemoshen.png')
+        kmsIcon = QPixmap(ICON_FP)
         about.setIconPixmap(kmsIcon)
         about.exec_()
 

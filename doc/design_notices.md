@@ -270,3 +270,15 @@ if __name__ == '__main__':
 ```
 
 在这两种方法中，你需要替换`"path_to_your_image.png"`为你的启动图片路径。这两种方法都使用了`QTimer`和`processEvents()`来模拟加载进度，并确保UI在加载时仍然响应用户操作。使用第二种方法时，通过自定义样式表（CSS）来美化进度条的外观，使其与你的启动画面更协调。
+
+## SystemConfigDialog on_ok_clicked() 中最后使用 self.close() 和 self.accept() 有区别吗？ 最后都能关闭dialog吗
+
+在 PyQt5 中，`self.close()` 和 `self.accept()` 在关闭对话框时有一些区别，虽然最终都能关闭对话框，但它们之间的行为略有不同。
+
+1. **self.close()**：当调用 `self.close()` 方法时，它会立即关闭对话框并销毁该对话框的实例。这种方式会直接关闭对话框，但不会发出任何是否成功的信号，也不会修改对话框的返回值。
+
+2. **self.accept()**：`self.accept()` 方法实际上是 QDialog 类的一个方法，用于接受对话框（比如按下确认按钮）并关闭对话框。在 PyQt5 中，`self.accept()` 方法会触发 QDialog 的 `QDialog.Accepted` 信号，表示用户确认了对话框的内容。另外，它还会设置对话框的返回值为 `QDialog.Accepted`，以便在后续代码中可以通过 `exec_()` 方法获取返回的值。
+
+因此，如果您希望在对话框的关闭操作中发出信号并返回一个特定值，建议使用 `self.accept()` 方法。如果只需要简单关闭对话框，并且不需要任何其他操作，可以使用 `self.close()`。
+
+在上述示例中，如果希望在对话框关闭时发送自定义信号，并且需要处理对话框的返回值，建议使用 `self.accept()` 方法。

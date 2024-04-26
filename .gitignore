@@ -17,10 +17,14 @@ test/tube_img/
 
 ### Nuitka
 exe_output/
+nuitka_output/
 *.onefile-build/
 *.dist/
 *.build/
 *.exe
+
+### Pyinstaller
+output/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

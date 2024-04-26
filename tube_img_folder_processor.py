@@ -33,7 +33,7 @@ from utils.utils import (
     md5_of_file,
 )
 from utils.chromo_cv_utils import cv_imread
-
+from utils.constants import ENCODING
 
 
 def write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp):
@@ -48,7 +48,7 @@ def write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp):
     """
     img_fn = os.path.splitext(os.path.basename(img_fp))[0]
     text_fp = f'{os.path.splitext(img_fp)[0]}.txt'
-    with open(text_fp, 'w', encoding='utf-8') as f:
+    with open(text_fp, 'w', encoding=ENCODING) as f:
         f.write(f'img_name:{img_fn}' + '\n')
         f.write(f'5078:{H_sqr}' + '\n')
         f.write(f'5079:{I_sqr}' + '\n')
@@ -60,10 +60,13 @@ def write_HIL_to_file(HIL, H_sqr, I_sqr, L_sqr, img_fp):
 
 
 class TubeImgFolderProcessor(QThread):
-
+    """Class of Tube Image Folder Processor 以独立线程的方式处理试管图片文件夹中的图像文件
+    """
     # image path, HIL indices and HIL classes
+    # 每处理一张图片就发出该图片的路径、HIL指数和HIL类别
     imgProcessed = pyqtSignal(str, int, int, int, str, str, str)
-    allImgProcessed = pyqtSignal()
+    # 所有图片处理完毕发出总的处理图片数
+    allImgProcessed = pyqtSignal(int)
 
     def __init__(self, HIL_predictor, img_folder_fp, img_exts, output_folder_fp):
         super().__init__()
@@ -73,10 +76,24 @@ class TubeImgFolderProcessor(QThread):
         self.HIL_predictor = HIL_predictor
         self.output_folder_fp = output_folder_fp
 
+
+    def setTubeImgAndOutputFolder(self, img_folder_fp, output_folder_fp):
+        """Config Change update tube image folder and output folder
+        """
+        self.img_folder_fp = img_folder_fp
+        self.output_folder_fp = output_folder_fp
+
     def run(self):
+        """以独立线程的方式处理试管图片文件夹中的图像文件
+        """
         # 获取目录下所有图片文件的访问路径
+        if not os.path.exists(self.img_folder_fp):
+            self.allImgProcessed.emit(0)
+            return
+
         img_fps = get_files_with_extensions(
             self.img_folder_fp, self.img_exts)
+        img_cnt = len(img_fps)
         # 遍历所有图片文件进行处理
         for img_fp in img_fps:
             img = cv_imread(img_fp)
@@ -110,10 +127,10 @@ class TubeImgFolderProcessor(QThread):
             HIL_md5_hash = md5_of_file(HIL_fp)
             # 保存MD5
             md5_fp = f'{os.path.splitext(img_fp_in_dst_folder)[0]}.md5'
-            with open(md5_fp, 'w', encoding='utf-8') as f:
+            with open(md5_fp, 'w', encoding=ENCODING) as f:
                 f.write(f'img_md5:{img_md5_hash}' + '\n')
                 f.write(f'HIL_md5:{HIL_md5_hash}' + '\n')
 
             self.imgProcessed.emit(os.path.join(
                 self.output_folder_fp, img_basename), HIL['H'], HIL['I'], HIL['L'], H_sqr, I_sqr, L_sqr)
-        self.allImgProcessed.emit()
+        self.allImgProcessed.emit(img_cnt)

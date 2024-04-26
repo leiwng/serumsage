@@ -1,5 +1,8 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """The Main Module of SerumSage(Serum Indices Interpretation)
+
+Author: Lei Wang
+Date: October 17, 2023
 """
 __author__ = "王磊"
 __copyright__ = "Copyright 2023 四川科莫生医疗科技有限公司"
@@ -10,13 +13,12 @@ __version__ = "0.0.1"
 __status__ = "Development"
 
 
-import sys
 import os
 import configparser
 
 from PyQt5.QtCore import QObject, QTimer, Qt
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene, QFileDialog, QLabel, QSplashScreen, QInputDialog, QLineEdit
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QGraphicsScene, QFileDialog, QLabel, QInputDialog, QLineEdit
 
 import ui_design.Ui_main_window as MainWindowUI
 import sys_cfg_dialog as SysCfgDialog
@@ -27,8 +29,9 @@ from utils.utils import (
     convert_HIL_indices_to_class
 )
 from utils.chromo_cv_utils import cv_imread
-from lic_man.lm_comm_lib import verify_license, verify_admin_password
+from lic_man.lm_comm_lib import verify_admin_password
 from logger import log
+from utils.constants import CONFIG_FP, ICON_FP, TUBE_IMG_DIR_FP, DETECT_OUTPUT_DIR_FP, INI_SYS_SECTION, SCAN_INTERVAL, TUBE_IMG_FOLDER, DETECT_OUTPUT_FOLDER, OD_MODEL_FP, FORECAST_MODEL_FP, ENCODING, PUBLIC_KEY_FP, ADMIN_PWD_HASH_SIGN_FP, MASTER_PWD_HASH_SIGN_FP, SCAN_INTERVAL_DEFAULT_VAL
 
 
 class MainWindow(QMainWindow, QObject):
@@ -48,12 +51,7 @@ class MainWindow(QMainWindow, QObject):
         # setup main window ui
         self.main_window_ui = MainWindowUI.Ui_MainWindow()
         self.main_window_ui.setupUi(self)
-        self.setWindowIcon(QIcon('./ui_img/icon_kemoshen.png'))
-
-        # setup system config dialog
-        self.sys_cfg_dlg = SysCfgDialog.SysCfgDialog(self)
-        self.main_window_ui.sysCfgAction.triggered.connect(
-            self.onSysCfgActionMenuTriggered)
+        self.setWindowIcon(QIcon(ICON_FP))
 
         # setup about dialog
         self.main_window_ui.serumSegaAboutAction.triggered.connect(
@@ -77,18 +75,38 @@ class MainWindow(QMainWindow, QObject):
         self.sys_cfg = configparser.ConfigParser()
 
         # check if config file exists, if no create one with default values
-        if os.path.exists('./cfg.ini') is False:
-            self.sys_cfg.add_section('SYS')
-            self.sys_cfg.set('SYS', 'scan_interval', '60')
-            self.sys_cfg.set('SYS', 'tube_img_folder', './test/tube_img')
-            self.sys_cfg.set('SYS', 'detect_output_folder',
-                             './test/detect_output')
-            self.sys_cfg.write(open('./cfg.ini', 'w', encoding='utf-8'))
-        self.sys_cfg.read('./cfg.ini')
-        self.scan_interval = self.sys_cfg.getint('SYS', 'scan_interval')
-        self.tube_img_folder = self.sys_cfg.get('SYS', 'tube_img_folder')
-        self.detect_output_folder = self.sys_cfg.get(
-            'SYS', 'detect_output_folder')
+        if os.path.exists(CONFIG_FP) is False:
+            self.sys_cfg.add_section(INI_SYS_SECTION)
+            self.sys_cfg.set(INI_SYS_SECTION, SCAN_INTERVAL, str(SCAN_INTERVAL_DEFAULT_VAL))
+            self.sys_cfg.set(INI_SYS_SECTION, TUBE_IMG_FOLDER, TUBE_IMG_DIR_FP)
+            self.sys_cfg.set(INI_SYS_SECTION, DETECT_OUTPUT_FOLDER, DETECT_OUTPUT_DIR_FP)
+            with open(CONFIG_FP, 'w', encoding=ENCODING) as cfg_f:
+                self.sys_cfg.write(cfg_f)
+
+            # 判断试管图片目录是否存在
+            if not os.path.exists(TUBE_IMG_DIR_FP):
+                os.makedirs(TUBE_IMG_DIR_FP)
+            # 判断检测结果输出目录是否存在
+            if not os.path.exists(DETECT_OUTPUT_DIR_FP):
+                os.makedirs(DETECT_OUTPUT_DIR_FP)
+
+            # 设置系统配置
+            self.scan_interval = SCAN_INTERVAL_DEFAULT_VAL
+            self.tube_img_folder = TUBE_IMG_DIR_FP
+            self.detect_output_folder = DETECT_OUTPUT_DIR_FP
+        else:
+            self.sys_cfg.read(CONFIG_FP)
+            self.scan_interval = self.sys_cfg.getint(INI_SYS_SECTION, SCAN_INTERVAL)
+            self.tube_img_folder = self.sys_cfg.get(INI_SYS_SECTION, TUBE_IMG_FOLDER)
+            self.detect_output_folder = self.sys_cfg.get(INI_SYS_SECTION, DETECT_OUTPUT_FOLDER)
+
+        # setup system config dialog
+        # 系统配置对话框的初始化依赖于系统配置文件的读取
+        # 所以在系统配置对话框初始化之前，需要先确保系统配置文件可以被读取
+        self.sys_cfg_dlg = SysCfgDialog.SysCfgDialog(self)
+        self.sys_cfg_dlg.config_updated.connect(self.sysCfgUpdated)
+        self.main_window_ui.sysCfgAction.triggered.connect(
+            self.onSysCfgActionMenuTriggered)
 
         # setup timer for image scan
         self.img_scan_timer = QTimer(self)
@@ -103,7 +121,7 @@ class MainWindow(QMainWindow, QObject):
 
         # Init HIL Predictor
         self.HIL_predictor = HIL_predictor(
-            './models/chkpnts/best.pt', './models/chkpnts/LHI-model-use.pt')
+            OD_MODEL_FP, FORECAST_MODEL_FP)
         # self.HIL_predictor = HIL_predictor(
         #     './pytorch_yolov5/checkpoints/best.pt', './pytorch_LogicRegression/checkpoints/LHI-model-use.pt')
         log.info("HIL Predictor initialized.")
@@ -168,25 +186,26 @@ class MainWindow(QMainWindow, QObject):
 
         self.work_mode_label.setText("工作模式:连续检测")
         self.status_report_label.setText("状态:正常")
+
         log.info("SerumSage started.")
 
     def onSysCfgActionMenuTriggered(self):
         """当系统配置菜单被触发时进行的操作
         """
 
-        pub_key_fp = "./lic_man/kms_serumsage_public_key.pem"
+        pub_key_fp = PUBLIC_KEY_FP
         # 判断public key是否存在
         if not os.path.exists(pub_key_fp):
             QMessageBox.critical(self, "公钥文件不存在", "公钥文件不存在")
             return
 
-        admin_pwd_hash_sign_fp = "./lic_man/admin_pwd.hash.sign"
+        admin_pwd_hash_sign_fp = ADMIN_PWD_HASH_SIGN_FP
         # 判断管理员密码hash签名文件是否存在
         if not os.path.exists(admin_pwd_hash_sign_fp):
             QMessageBox.critical(self, "管理员密码hash签名文件不存在", "管理员密码hash签名文件不存在")
             return
 
-        master_pwd_hash_sign_fp = "./lic_man/master_pwd.hash.sign"
+        master_pwd_hash_sign_fp = MASTER_PWD_HASH_SIGN_FP
         # 判断主密码hash签名文件是否存在
         if not os.path.exists(master_pwd_hash_sign_fp):
             QMessageBox.critical(self, "主密码hash签名文件不存在", "主密码hash签名文件不存在")
@@ -199,10 +218,43 @@ class MainWindow(QMainWindow, QObject):
 
         if ok and passed:
             self.sys_cfg_dlg.show()
+            log.info("SysConfig Dialog Showed.")
         elif ok:
+            log.info("Password Verification Failed, before enter SysConfig.")
             QMessageBox.critical(self, "密码验证失败", return_msg)
 
+    def sysCfgUpdated(self, updated_cfg):
+        """系统配置更新
+        """
+        self.scan_interval = updated_cfg[0]
+        self.tube_img_folder = updated_cfg[1]
+        self.detect_output_folder = updated_cfg[2]
+
+        self.img_scan_timer.setInterval(self.scan_interval * 1000)
+
+        # update tube image folder processor
+        self.tube_img_folder_processor.setTubeImgAndOutputFolder(
+            self.tube_img_folder, self.detect_output_folder)
+
+        # update Result Browser Tab
+        # update output folder path in result browser
+        self.main_window_ui.outputFolderPathEdit.setText(
+            self.detect_output_folder)
+        # update file list in result browser
+        self.main_window_ui.outputFileList.clear()
+        if os.path.exists(self.detect_output_folder):
+            img_fps = get_files_with_extensions(
+                self.detect_output_folder, self.img_file_exts)
+            for img_fp in img_fps:
+                img_basename = os.path.basename(img_fp)
+                self.main_window_ui.outputFileList.addItem(img_basename)
+
+        log.info("System Config Updated.")
+
+
     def showTubeImgAndHIL4RB(self):
+        """show tube image and HIL indices for result browser
+        """
         selected_item = self.main_window_ui.outputFileList.currentItem()
         if selected_item is not None:
             fn = selected_item.text()
@@ -218,7 +270,9 @@ class MainWindow(QMainWindow, QObject):
                 self.getHILInfoFromFileAndShow(text_fp)
 
     def getHILInfoFromFileAndShow(self, text_fp):
-        with open(text_fp, 'r', encoding='utf-8') as f:
+        """get HIL indices from file and show them
+        """
+        with open(text_fp, 'r', encoding=ENCODING) as f:
             lines = f.readlines()
             HIL = {}
             for line in lines:
@@ -244,17 +298,21 @@ class MainWindow(QMainWindow, QObject):
         self.main_window_ui.LClassEdit4RB.setText(L_sqr)
 
     def showAboutDialog(self):
+        """show about dialog
+        """
         about = QMessageBox()
         about.setWindowTitle("关于-SerumSage")
-        about.setWindowIcon(QIcon('./ui_img/icon_kemoshen.png'))
+        about.setWindowIcon(QIcon(ICON_FP))
         about.setText("血清指数智能判读-SerumSage")
         about.setInformativeText(
             f"授权用户: {self.usr_name}\n使用许可到期时间: {self.expiry_date[:10]}\n\n四川科莫生医疗科技有限公司.\n版本号:1.0.0\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
-        kmsIcon = QPixmap('./ui_img/icon_kemoshen.png')
+        kmsIcon = QPixmap(ICON_FP)
         about.setIconPixmap(kmsIcon)
         about.exec_()
 
     def showTubeImgAndHIL4CD(self, img_fp, H_indices, I_indices, L_indices, H_sqr, I_sqr, L_sqr):
+        """show tube image and HIL indices for continue detection
+        """
         # show tube image
         pixmap = QPixmap(img_fp)
         if self.pix_map_item_4cd is None:
@@ -269,15 +327,23 @@ class MainWindow(QMainWindow, QObject):
         self.main_window_ui.HClassEdit4CD.setText(H_sqr)
         self.main_window_ui.IClassEdit4CD.setText(I_sqr)
         self.main_window_ui.LClassEdit4CD.setText(L_sqr)
+        # add new processed image to file list in result browser
+        self.main_window_ui.outputFileList.addItem(os.path.basename(img_fp))
         log.info(
             f"Continue Detection: image_file: {img_fp} H:{H_indices} I:{I_indices} L:{L_indices} H_sqr:{H_sqr} I_sqr:{I_sqr} L_sqr:{L_sqr}")
 
-    def allImgProcessed(self):
+    def allImgProcessed(self, processed_img_cnt):
+        """All tube images processed
+        """
         # Image Scan Completed, Set Image Scan State to False
         self.on_img_scan = False
         self.status_report_label.setText("状态:试管图片扫描结束")
+        if processed_img_cnt > 0:
+            log.info(f"All Tube Images in {self.tube_img_folder} Processed, Total: {processed_img_cnt}")
 
     def imgScanTimerTimeout(self):
+        """Image Scan Timer Timeout
+        """
         if self.on_img_scan is True:
             log.info(
                 "imgScanTimerTimeout: Last Image Scan is not completed, Wait for next round.")
@@ -292,6 +358,8 @@ class MainWindow(QMainWindow, QObject):
         self.status_report_label.setText("状态:开始试管图片扫描")
 
     def mainWorkTabChanged(self, index):
+        """Main Window Tab Changed
+        """
         if index == 0:
             if self.img_scan_timer.isActive() is False:
                 self.img_scan_timer.start()
@@ -310,6 +378,8 @@ class MainWindow(QMainWindow, QObject):
                 log.info("Work Mode Change to Result Browser.")
 
     def onResize(self, event):
+        """Main Window Resize
+        """
         font_size = self.main_window_ui.HClassEdit4CD.height() // 2
         font = self.main_window_ui.HClassEdit4CD.font()
         font.setPointSize(font_size)
@@ -319,6 +389,8 @@ class MainWindow(QMainWindow, QObject):
         self.main_window_ui.LClassEdit4CD.setFont(font)
 
     def openFileNameDialog(self):
+        """open file dialog to select tube image
+        """
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(
             self, "选择血清试管图片", "", "血清试管图片文件 (*.jpg);;所有文件 (*)", options=options)
@@ -344,31 +416,31 @@ class MainWindow(QMainWindow, QObject):
             self.main_window_ui.LClassEdit4SD.setText(L_sqr)
 
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setStyle("Fusion")
+# if __name__ == '__main__':
+#     app = QApplication(sys.argv)
+#     app.setStyle("Fusion")
 
-    # 显示Splash Screen
-    splash_pix = QPixmap('./ui_img/logo_kemoshen.png')
-    splash = QSplashScreen(splash_pix)
-    splash.showMessage("正在启动...", Qt.AlignCenter | Qt.AlignBottom, Qt.white)
-    splash.show()
+#     # 显示Splash Screen
+#     splash_pix = QPixmap(SPLASH_IMG_FP)
+#     splash = QSplashScreen(splash_pix)
+#     splash.showMessage("正在启动...", Qt.AlignCenter | Qt.AlignBottom, Qt.white)
+#     splash.show()
 
-    # 允许处理其他事件
-    app.processEvents()
+#     # 允许处理其他事件
+#     app.processEvents()
 
-    # 延时以模拟启动过程
-    QTimer.singleShot(2000, splash.close)
+#     # 延时以模拟启动过程
+#     QTimer.singleShot(2000, splash.close)
 
-    # 检查许可证
-    result, msg, usr_name, expiry_date = verify_license("./lic_man/license.lic", "utf-8", "./lic_man/kms_serumsage_public_key.pem")
-    if not result:
-        log.error(msg)
-        QMessageBox.critical(None, "许可证验证失败", "\n\n  许可证验证失败:      \n\n" + msg + "    \n")
-        sys.exit(1)
-        # sys.exit(app.exec_())
+#     # 检查许可证
+#     result, msg, usr_name, expiry_date = verify_license(LICENSE_FP, "utf-8", PUBLIC_KEY_FP)
+#     if not result:
+#         log.error(msg)
+#         QMessageBox.critical(None, "许可证验证失败", "\n\n  许可证验证失败:      \n\n" + msg + "    \n")
+#         sys.exit(1)
+#         # sys.exit(app.exec_())
 
-    main_window_ui = MainWindow(usr_name=usr_name, expiry_date=expiry_date)
-    # main_window_ui.showMaximized()
-    main_window_ui.show()
-    sys.exit(app.exec_())
+#     main_window_ui = MainWindow(usr_name=usr_name, expiry_date=expiry_date)
+#     # main_window_ui.showMaximized()
+#     main_window_ui.show()
+#     sys.exit(app.exec_())

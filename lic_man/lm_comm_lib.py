@@ -29,6 +29,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 
+from utils.constants import ENCODING
+
 
 def get_cpu_info_str():
     """获取CPU信息
@@ -208,7 +210,7 @@ def verify_password(stored_hash, provided_password):
         _type_: _description_
     """
     # 比较存储的散列和提供的密码的散列
-    return bcrypt.checkpw(provided_password.encode('utf-8'), stored_hash)
+    return bcrypt.checkpw(provided_password.encode(ENCODING), stored_hash)
 
 
 def generate_password_hash(password):
@@ -221,7 +223,7 @@ def generate_password_hash(password):
         Hash Bytes: 密码的HASH
     """
     # 将密码转换为字节，然后散列
-    password_bytes = password.encode('utf-8')
+    password_bytes = password.encode(ENCODING)
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(password_bytes, salt)
 

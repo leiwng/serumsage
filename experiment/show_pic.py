@@ -9,18 +9,19 @@ __version__ = "0.0.1"
 __status__ = "Development"
 
 
-import os, sys, time
-from PyQt5.QtCore import QObject, QTimer, Qt
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene
-import Ui_show_pic as MainWindowUI
+import os
+import sys
+from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene
+from experiment.Ui_show_pic import Ui_MainWindow
 
 
 def get_files_with_extensions(folder_path, extensions):
     """Get file paths with specific extensions in a folder
 
     Args:
-        folder_path (String): File folder path, e.g. './test/tube_img', the folder must be exist
+        folder_path (String): File folder path, e.g. TUBE_IMG_DIR_FP, the folder must be exist
         extensions (List of String): List of File extensions, e.g. ['jpg', 'png', 'jpeg', 'JPG','bmp']
 
     Returns:
@@ -38,7 +39,7 @@ class MainWindow(QMainWindow, QObject):
         QObject.__init__(self)
 
         # setup main window ui
-        self.main_window = MainWindowUI.Ui_MainWindow()
+        self.main_window = Ui_MainWindow()
         self.main_window.setupUi(self)
 
         # setup pic view
