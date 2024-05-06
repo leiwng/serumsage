@@ -256,7 +256,7 @@ class SerumIndicesGroup(QGroupBox):
         self.L_indices = None # lipaemia indices 乳糜指数
 
     def initUI(self):
-        self.setTitle("血清指数分析结果")
+        self.setTitle("血清指数参考值")
 
         self.H_indices_edit = QLineEdit()
         self.H_indices_edit.setReadOnly(True)
@@ -299,7 +299,7 @@ class SerumClassGroup(QGroupBox):
         self.I_sqr = None
 
     def initUI(self):
-        self.setTitle("血清指数分类结果")
+        self.setTitle("血清指数分析结果")
 
         self.H_class_edit = QLineEdit()
         self.H_class_edit.setReadOnly(True)

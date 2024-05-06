@@ -106,7 +106,7 @@
            <item>
             <widget class="QGroupBox" name="groupBox_2">
              <property name="title">
-              <string>血清指数分析结果</string>
+              <string>血清指数参考值</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
@@ -191,7 +191,7 @@
            <item>
             <widget class="QGroupBox" name="groupBox_3">
              <property name="title">
-              <string>血清指数分类结果</string>
+              <string>血清指数分析结果</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
@@ -392,7 +392,7 @@
                 <item row="0" column="0">
                  <widget class="QGroupBox" name="groupBox_5">
                   <property name="title">
-                   <string>血清指数分析结果</string>
+                   <string>血清指数参考值</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_4">
                    <item>
@@ -470,7 +470,7 @@
                 <item row="1" column="0">
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>血清指数分类结果</string>
+                   <string>血清指数分析结果</string>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_5">
                    <item>
@@ -679,7 +679,7 @@
               <item>
                <widget class="QGroupBox" name="groupBox_8">
                 <property name="title">
-                 <string>血清指数分析结果</string>
+                 <string>血清指数参考值</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
                  <item>
@@ -757,7 +757,7 @@
               <item>
                <widget class="QGroupBox" name="groupBox_9">
                 <property name="title">
-                 <string>血清指数分类结果</string>
+                 <string>血清指数分析结果</string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
