@@ -87,7 +87,7 @@ class SysCfgDialog(QDialog, QObject):
 
         detect_output_folder = self.ui.detectOutputFolderEdit.text()
         if os.path.isdir(detect_output_folder) is False or os.path.exists(detect_output_folder) is False:
-            QMessageBox.warning(self, "Warning", "检测结果输出文件夹不存在.")
+            QMessageBox.warning(self, "Warning", "分析结果输出文件夹不存在.")
             self.close()
             return
         if detect_output_folder != self.detect_output_folder:

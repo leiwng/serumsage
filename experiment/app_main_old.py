@@ -18,7 +18,7 @@ from AnimatedToggle import AnimatedToggle
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = '血清指数智能判读-SerumSage'
+        self.title = '血清指数分析软件-SerumSage'
         self.initUI()
 
     def initUI(self):
@@ -46,7 +46,7 @@ class App(QMainWindow):
         ###
         ### Status bar
         ###
-        self.statusBar().showMessage(' 连续检测 | 就绪 ')
+        self.statusBar().showMessage(' 连续分析 | 就绪 ')
 
         ###
         ### Central widget
@@ -63,8 +63,8 @@ class App(QMainWindow):
         self.tab4RB = QWidget()
 
         # Add tabs
-        self.tab_widget.addTab(self.tab4CW, "连续检测")
-        self.tab_widget.addTab(self.tab4CW, "单次检测")
+        self.tab_widget.addTab(self.tab4CW, "连续分析")
+        self.tab_widget.addTab(self.tab4CW, "单次分析")
         self.tab_widget.addTab(self.tab4RB, "结果浏览")
 
         # Add widgets to tabs
@@ -111,7 +111,7 @@ class App(QMainWindow):
         # TODO: Implement the function to show About dialog
         about = QMessageBox()
         about.setWindowTitle("About")
-        about.setText("血清指数智能判读-SerumSage")
+        about.setText("血清指数分析软件-SerumSage")
         about.setInformativeText("四川科莫生医疗科技有限公司.\nCopyright © 2023 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
         kmsIcon = QPixmap(ICON_FP)
         about.setIconPixmap(kmsIcon)
@@ -147,10 +147,10 @@ class ConfigDialog(QDialog):
         layout.addWidget(inputFolderButton)
 
         # Output folder selection button
-        outputFolderButton = QPushButton("选择检测结果输出文件夹")
+        outputFolderButton = QPushButton("选择分析结果输出文件夹")
         outputFolderButton.clicked.connect(self.selectOutputFolder)
         self.outputFolderLineEdit = QLineEdit()
-        layout.addRow("检测结果输出文件夹:", self.outputFolderLineEdit)
+        layout.addRow("分析结果输出文件夹:", self.outputFolderLineEdit)
         layout.addWidget(outputFolderButton)
 
         # OK and Cancel buttons
@@ -173,7 +173,7 @@ class ConfigDialog(QDialog):
     def selectOutputFolder(self):
         options = QFileDialog.Options()
         if folderName := QFileDialog.getExistingDirectory(
-            self, "选择检测结果输出文件夹", options=options
+            self, "选择分析结果输出文件夹", options=options
         ):
             self.outputFolderLineEdit.setText(folderName)
 
@@ -256,7 +256,7 @@ class SerumIndicesGroup(QGroupBox):
         self.L_indices = None # lipaemia indices 乳糜指数
 
     def initUI(self):
-        self.setTitle("血清指数检测结果")
+        self.setTitle("血清指数分析结果")
 
         self.H_indices_edit = QLineEdit()
         self.H_indices_edit.setReadOnly(True)

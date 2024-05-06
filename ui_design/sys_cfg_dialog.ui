@@ -61,7 +61,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>检测结果输出文件夹:</string>
+            <string>分析结果输出文件夹:</string>
            </property>
           </widget>
          </item>

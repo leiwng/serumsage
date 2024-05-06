@@ -86,7 +86,7 @@ class MainWindow(QMainWindow, QObject):
             # 判断试管图片目录是否存在
             if not os.path.exists(TUBE_IMG_DIR_FP):
                 os.makedirs(TUBE_IMG_DIR_FP)
-            # 判断检测结果输出目录是否存在
+            # 判断分析结果输出目录是否存在
             if not os.path.exists(DETECT_OUTPUT_DIR_FP):
                 os.makedirs(DETECT_OUTPUT_DIR_FP)
 
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow, QObject):
             QLabel.StyledPanel | QLabel.Sunken)
         self.status_bar.addPermanentWidget(self.status_report_label, 1)
 
-        self.work_mode_label.setText("工作模式:连续检测")
+        self.work_mode_label.setText("工作模式:连续分析")
         self.status_report_label.setText("状态:正常")
 
         log.info("SerumSage started.")
@@ -303,7 +303,7 @@ class MainWindow(QMainWindow, QObject):
         about = QMessageBox()
         about.setWindowTitle("关于-SerumSage")
         about.setWindowIcon(QIcon(ICON_FP))
-        about.setText("血清指数智能判读-SerumSage")
+        about.setText("血清指数分析软件-SerumSage")
         about.setInformativeText(
             f"授权用户: {self.usr_name}\n使用许可到期时间: {self.expiry_date[:10]}\n\n四川科莫生医疗科技有限公司.\n版本号:1.0.0\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
         kmsIcon = QPixmap(ICON_FP)
@@ -363,13 +363,13 @@ class MainWindow(QMainWindow, QObject):
         if index == 0:
             if self.img_scan_timer.isActive() is False:
                 self.img_scan_timer.start()
-            self.work_mode_label.setText("工作模式: 连续检测")
+            self.work_mode_label.setText("工作模式: 连续分析")
             self.status_report_label.setText("状态: 正常")
             log.info("Work Mode Change to Continue Detection.")
         else:
             self.img_scan_timer.stop()
             if index == 1:
-                self.work_mode_label.setText("工作模式: 单张检测")
+                self.work_mode_label.setText("工作模式: 单张分析")
                 self.status_report_label.setText("状态: 正常")
                 log.info("Work Mode Change to Single Detection.")
             elif index == 2:

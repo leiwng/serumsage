@@ -81,4 +81,4 @@ class Ui_sysCfgDlg(object):
         sysCfgDlg.setWindowTitle(_translate("sysCfgDlg", "Dialog"))
         self.label.setText(_translate("sysCfgDlg", "图片文件扫描间隔(秒):"))
         self.label_2.setText(_translate("sysCfgDlg", "血清试管图片文件夹:"))
-        self.label_3.setText(_translate("sysCfgDlg", "检测结果输出文件夹:"))
+        self.label_3.setText(_translate("sysCfgDlg", "分析结果输出文件夹:"))
