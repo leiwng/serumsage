@@ -115,7 +115,7 @@
                  <item>
                   <widget class="QLabel" name="label">
                    <property name="text">
-                    <string>H (血红蛋白指数):</string>
+                    <string>H (血红蛋白):</string>
                    </property>
                   </widget>
                  </item>
@@ -138,7 +138,7 @@
                  <item>
                   <widget class="QLabel" name="label_2">
                    <property name="text">
-                    <string>I (黄疸指数):        </string>
+                    <string>I (黄疸):        </string>
                    </property>
                   </widget>
                  </item>
@@ -161,7 +161,7 @@
                  <item>
                   <widget class="QLabel" name="label_3">
                    <property name="text">
-                    <string>L (乳糜指数):       </string>
+                    <string>L (乳糜):       </string>
                    </property>
                   </widget>
                  </item>
@@ -200,7 +200,7 @@
                  <item>
                   <widget class="QLabel" name="label_4">
                    <property name="text">
-                    <string>H (血红蛋白指数分类):</string>
+                    <string>H (血红蛋白):</string>
                    </property>
                   </widget>
                  </item>
@@ -229,7 +229,7 @@
                  <item>
                   <widget class="QLabel" name="label_6">
                    <property name="text">
-                    <string>I (黄疸指数分类):        </string>
+                    <string>I (黄疸):        </string>
                    </property>
                   </widget>
                  </item>
@@ -258,7 +258,7 @@
                  <item>
                   <widget class="QLabel" name="label_5">
                    <property name="text">
-                    <string>L (乳糜指数分类):       </string>
+                    <string>L (乳糜):       </string>
                    </property>
                   </widget>
                  </item>
@@ -401,7 +401,7 @@
                       <item>
                        <widget class="QLabel" name="label_8">
                         <property name="text">
-                         <string>H (血红蛋白指数):</string>
+                         <string>H (血红蛋白):</string>
                         </property>
                        </widget>
                       </item>
@@ -424,7 +424,7 @@
                       <item>
                        <widget class="QLabel" name="label_9">
                         <property name="text">
-                         <string>I (黄疸指数):        </string>
+                         <string>I (黄疸):        </string>
                         </property>
                        </widget>
                       </item>
@@ -447,7 +447,7 @@
                       <item>
                        <widget class="QLabel" name="label_10">
                         <property name="text">
-                         <string>L (乳糜指数):       </string>
+                         <string>L (乳糜):       </string>
                         </property>
                        </widget>
                       </item>
@@ -479,7 +479,7 @@
                       <item>
                        <widget class="QLabel" name="label_11">
                         <property name="text">
-                         <string>H (血红蛋白指数分类):</string>
+                         <string>H (血红蛋白):</string>
                         </property>
                        </widget>
                       </item>
@@ -508,7 +508,7 @@
                       <item>
                        <widget class="QLabel" name="label_12">
                         <property name="text">
-                         <string>I (黄疸指数分类):        </string>
+                         <string>I (黄疸):        </string>
                         </property>
                        </widget>
                       </item>
@@ -537,7 +537,7 @@
                       <item>
                        <widget class="QLabel" name="label_13">
                         <property name="text">
-                         <string>L (乳糜指数分类):       </string>
+                         <string>L (乳糜):       </string>
                         </property>
                        </widget>
                       </item>
@@ -688,7 +688,7 @@
                     <item>
                      <widget class="QLabel" name="label_15">
                       <property name="text">
-                       <string>H (血红蛋白指数):</string>
+                       <string>H (血红蛋白):</string>
                       </property>
                      </widget>
                     </item>
@@ -711,7 +711,7 @@
                     <item>
                      <widget class="QLabel" name="label_16">
                       <property name="text">
-                       <string>I (黄疸指数):        </string>
+                       <string>I (黄疸):        </string>
                       </property>
                      </widget>
                     </item>
@@ -734,7 +734,7 @@
                     <item>
                      <widget class="QLabel" name="label_17">
                       <property name="text">
-                       <string>L (乳糜指数):       </string>
+                       <string>L (乳糜):       </string>
                       </property>
                      </widget>
                     </item>
@@ -766,7 +766,7 @@
                     <item>
                      <widget class="QLabel" name="label_18">
                       <property name="text">
-                       <string>H (血红蛋白指数分类):</string>
+                       <string>H (血红蛋白):</string>
                       </property>
                      </widget>
                     </item>
@@ -795,7 +795,7 @@
                     <item>
                      <widget class="QLabel" name="label_19">
                       <property name="text">
-                       <string>I (黄疸指数分类):        </string>
+                       <string>I (黄疸):        </string>
                       </property>
                      </widget>
                     </item>
@@ -824,7 +824,7 @@
                     <item>
                      <widget class="QLabel" name="label_20">
                       <property name="text">
-                       <string>L (乳糜指数分类):       </string>
+                       <string>L (乳糜):       </string>
                       </property>
                      </widget>
                     </item>

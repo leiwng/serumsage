@@ -232,9 +232,9 @@ class SerumIndicesResultForm(QFormLayout):
         self.initUI()
 
     def initProperty(self):
-        self.H_indices = None # hemoglobin indices 血红蛋白指数
-        self.L_indices = None # lipaemia indices 乳糜指数
-        self.I_indices = None # icterus indices 黄疸指数
+        self.H_indices = None # hemoglobin indices 血红蛋白
+        self.L_indices = None # lipaemia indices 乳糜
+        self.I_indices = None # icterus indices 黄疸
 
         self.H_sqr = None
         self.L_sqr = None
@@ -251,9 +251,9 @@ class SerumIndicesGroup(QGroupBox):
         self.initUI()
 
     def initProperty(self):
-        self.H_indices = None # hemoglobin indices 血红蛋白指数
-        self.I_indices = None # icterus indices 黄疸指数
-        self.L_indices = None # lipaemia indices 乳糜指数
+        self.H_indices = None # hemoglobin indices 血红蛋白
+        self.I_indices = None # icterus indices 黄疸
+        self.L_indices = None # lipaemia indices 乳糜
 
     def initUI(self):
         self.setTitle("血清指数参考值")
@@ -270,9 +270,9 @@ class SerumIndicesGroup(QGroupBox):
         self.L_indices_edit.setReadOnly(True)
         self.L_indices_edit.setText(str(self.L_indices))
 
-        self.addRow("H (血红蛋白指数):", self.H_indices_edit)
-        self.addRow("I (黄疸指数)   :", self.I_indices_edit)
-        self.addRow("L (乳糜指数)   :", self.L_indices_edit)
+        self.addRow("H (血红蛋白):", self.H_indices_edit)
+        self.addRow("I (黄疸)   :", self.I_indices_edit)
+        self.addRow("L (乳糜)   :", self.L_indices_edit)
 
     def setIndices(self, H_indices, I_indices, L_indices):
         self.H_indices = H_indices
@@ -313,9 +313,9 @@ class SerumClassGroup(QGroupBox):
         self.L_class_edit.setReadOnly(True)
         self.L_class_edit.setText(str(self.L_sqr))
 
-        self.addRow("H (血红蛋白指数分类):", self.H_class_edit)
-        self.addRow("I (黄疸指数分类)   :", self.I_class_edit)
-        self.addRow("L (乳糜指数分类)   :", self.L_class_edit)
+        self.addRow("H (血红蛋白):", self.H_class_edit)
+        self.addRow("I (黄疸)   :", self.I_class_edit)
+        self.addRow("L (乳糜)   :", self.L_class_edit)
 
     def setClass(self, H_sqr, I_sqr, L_sqr):
         self.H_sqr = H_sqr
