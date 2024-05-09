@@ -282,3 +282,44 @@ if __name__ == '__main__':
 因此，如果您希望在对话框的关闭操作中发出信号并返回一个特定值，建议使用 `self.accept()` 方法。如果只需要简单关闭对话框，并且不需要任何其他操作，可以使用 `self.close()`。
 
 在上述示例中，如果希望在对话框关闭时发送自定义信号，并且需要处理对话框的返回值，建议使用 `self.accept()` 方法。
+
+## 避免PyTorch的UserWarning
+
+### 如何避免终端输出UserWarning
+
+这些警告通常是由于PyTorch版本更新或相关代码变化导致的。要跳过这些警告，你可以在启动程序时设置Python的警告过滤器，将特定类型的警告忽略掉。你可以使用Python的warnings模块来实现这一点。
+
+下面是一个示例，演示如何在Python中忽略特定类型的警告：
+
+```python
+import warnings
+
+# 忽略特定类型的警告
+warnings.filterwarnings("ignore", category=UserWarning, message="Couldn't retrieve source code for container of type")
+
+# 运行你的代码
+# your_code_here
+```
+
+在这个示例中，我们忽略了特定类型为`UserWarning`且消息为`"Couldn't retrieve source code for container of type"`的警告。你可以根据实际情况修改警告过滤器以满足你的需求。
+
+### 在所有import torch 的模块中都有加入这一条吗？还是说只需要在主程序中加入就行了
+
+在所有的import torch的模块中都需要加入这一条，以确保在整个程序运行过程中都能忽略特定类型的警告。如果只在主程序中加入，则只会在主程序中生效，而在其他模块中导入torch的部分仍然会触发警告。因此，最好是在整个程序的开始处或入口文件中加入这一条警告过滤器。
+
+### 如果要忽略多种warning呢？比如还需要忽略 “SourceChangeWarning”
+
+如果你需要同时忽略多种类型的警告，你可以在warnings.filterwarnings()函数中提供一个警告列表，指定要忽略的警告类型。下面是一个示例，演示如何同时忽略多种类型的警告：
+
+```python
+import warnings
+
+# 忽略多种类型的警告
+warnings.filterwarnings("ignore", category=UserWarning, message="Couldn't retrieve source code for container of type")
+warnings.filterwarnings("ignore", category=SourceChangeWarning)
+
+# 运行你的代码
+# your_code_here
+```
+
+在这个示例中，我们通过多次调用filterwarnings()函数来设置要忽略的警告类型。你可以根据需要添加更多的filterwarnings()调用来忽略其他类型的警告。

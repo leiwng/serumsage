@@ -15,10 +15,14 @@ __status__ = "Development"
 
 
 import sys
+import warnings
 
 from new_world import new_world
 from logger import log
 
+
+# 忽略警告
+warnings.filterwarnings("ignore")
 
 if __name__ == "__main__":
     success, result_or_app = new_world()
