@@ -306,6 +306,8 @@ class MainWindow(QMainWindow, QObject):
         about.setText("血清指数分析软件-SerumSage")
         about.setInformativeText(
             f"授权用户: {self.usr_name}\n使用许可到期时间: {self.expiry_date[:10]}\n\n四川科莫生医疗科技有限公司.\n版本号:1.0.0\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
+        # about.setInformativeText(
+        #     f"授权用户: {self.usr_name}\n使用许可到期时间: {self.expiry_date[:10]}\n\n四川大学华西医院.\n版本号:1.0.0\nCopyright © 2024 WEST CHINA HOSPITAL SICHUAN UNIVERSITY. All rights reserved.")
         kmsIcon = QPixmap(ICON_FP)
         about.setIconPixmap(kmsIcon)
         about.exec_()

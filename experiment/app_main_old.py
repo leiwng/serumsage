@@ -13,6 +13,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QAction, QTabWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QTextEdit, QListView, QWidget, QMessageBox, QDialog, QFormLayout, QLineEdit, QGraphicsScene, QGraphicsView, QGraphicsPixmapItem, QGroupBox
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from AnimatedToggle import AnimatedToggle
+from utils.constants import ICON_FP
 
 
 class App(QMainWindow):
@@ -112,7 +113,8 @@ class App(QMainWindow):
         about = QMessageBox()
         about.setWindowTitle("About")
         about.setText("血清指数分析软件-SerumSage")
-        about.setInformativeText("四川科莫生医疗科技有限公司.\nCopyright © 2023 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
+        about.setInformativeText("四川科莫生医疗科技有限公司.\nCopyright © 2024 Kemoshen Medical Tech. Co., Ltd. All rights reserved.")
+        # about.setInformativeText("四川大学华西医院.\nCopyright © 2024 WEST CHINA HOSPITAL SICHUAN UNIVERSITY. All rights reserved.")
         kmsIcon = QPixmap(ICON_FP)
         about.setIconPixmap(kmsIcon)
         about.exec_()
